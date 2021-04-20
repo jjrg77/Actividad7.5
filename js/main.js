@@ -1,7 +1,6 @@
 const arrayTemp = [];
 let idTemp;
 const inputsForm = document.querySelectorAll("#form1 input");
-
 class Product {
        constructor(productName, productPrice, productYear, id) {
               this.productName = productName,
@@ -10,7 +9,6 @@ class Product {
                      this.id = id;
        }
 }
-
 class Interfaz {
        //métodos de la interfaz
        CleanForm() {
@@ -26,12 +24,12 @@ class Interfaz {
                      <div class="card text-center mb-2">
                             <div class="card-body">
                                    <hr>
-                                   <strong>Referencia del producto: </strong> ${product.id}<br>
+                                   <strong>Referencia del producto: </strong>${product.id}<br>
                                    <hr>
                                    <strong>Producto: </strong> ${product.productName}<br />
                                    <strong>Precio: </strong> ${product.productPrice} €<br />
                                    <strong>Año: </strong> ${product.productYear}<br />
-                                   <a href="#"><i id="delete" class="fas fa-trash-alt i"></i></a>
+                                   <a href="#"><i id="${product.id}" class="fas fa-trash-alt i"></i></a>
                             </div>
                      </div>
               `;
@@ -42,13 +40,19 @@ class Interfaz {
               idTemp = product.id;
               arrayTemp.push(idTemp);
               this.ShowMessage('Producto agregado satisfactoriamente', 'success');
-              
+
        }
 
        DeleteProduct(element) {
-              if (element.id === 'delete') {
-                     console.log(element.parentElement.parentElement.parentElement.remove());
-                     this.ShowMessage('Producto eliminado', 'warning');
+              const varTemp = document.getElementById(element.id).id;
+              element.parentElement.parentElement.parentElement.remove();
+              this.ShowMessage('Producto eliminado', 'warning');
+
+              //eliminamos elemento de array
+              for (let i in arrayTemp) {
+                     if (arrayTemp[i] === varTemp) {
+                            arrayTemp.splice(i, 1);
+                     }
               }
        }
 
@@ -63,7 +67,7 @@ class Interfaz {
               setTimeout(() => {
                      span.className = '';
                      span.innerHTML = '';
-                 }, 2000);
+              }, 2000);
        }
 }
 
@@ -77,50 +81,46 @@ const valida = {
 
 const validarForm = (e) => {
        switch (e.target.name) {
-           case "nameProduct":
-               valida.nameProduct = true;
-               break;
-           case "priceProduct":
-               valida.priceProduct = true;
-               break;
-           case "yearProduct":
-               valida.yearProduct = true;
-               break;
+              case "nameProduct":
+                     valida.nameProduct = true;
+                     break;
+              case "priceProduct":
+                     valida.priceProduct = true;
+                     break;
+              case "yearProduct":
+                     valida.yearProduct = true;
+                     break;
        }
-   };
+};
 
 //DOM EVENTS
 document.getElementById('form').addEventListener('submit', function (e) {
-       const name = getElementById = document.getElementById('nameProduct').value;
-       const price = getElementById = document.getElementById('priceProduct').value;
-       const year = getElementById = document.getElementById('yearProduct').value;
+       const name = document.getElementById('nameProduct').value;
+       const price = document.getElementById('priceProduct').value;
+       const year = document.getElementById('yearProduct').value;
        const id = name + price + year;
        const product1 = new Product(name, price, year, id);
 
        const interfaz = new Interfaz();
-       if(name !== '' && price !== ''&& year !== '') {
+       if (name !== '' && price !== '' && year !== '') {
               valida.nameProduct = true;
               valida.priceProduct = true;
               valida.yearProduct = true;
-              if(arrayTemp == ''){
+              if (arrayTemp == '') {
                      interfaz.AddProduct(product1);
-              }
-              else {
-                     if(arrayTemp.includes(id)){
+              } else {
+                     if (arrayTemp.includes(id)) {
                             interfaz.ShowMessage('Error. Producto existente en nuestra Base de Datos', 'danger');
-                     }else{
+                     } else {
                             interfaz.AddProduct(product1);
                      }
               }
-                     
-       }
-       else{
+
+       } else {
               interfaz.ShowMessage('No puede haber campos vacíos', 'danger');
        }
        e.preventDefault();
 });
-
-
 
 document.getElementById('productList').addEventListener('click', function (e) {
        const interfaz = new Interfaz();
